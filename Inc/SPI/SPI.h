@@ -41,16 +41,16 @@ typedef struct SPI_Config
 	uint8_t DMA_TX;
 	uint8_t DMA_RX;
 	uint8_t Frame;
+	GPIO_TypeDef *nCSS_Port;
+	int nCSS_pin;
 }SPI_Config;
 
 void SPI_Init(SPI_Config SPI);
 void SPI_CSS_Init(SPI_Config SPI);
 void SPI_CSS_High(SPI_Config SPI);
 void SPI_CSS_Low(SPI_Config SPI);
-void SPI_Send_Data(SPI_Config SPI,uint8_t data);
+void SPI_Send_Data(SPI_Config SPI, int data);
 int SPI_Receive_Data(SPI_Config SPI);
-
-
 
 
 #endif /* SPI_SPI_H_ */

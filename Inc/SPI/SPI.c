@@ -20,42 +20,40 @@ void SPI_Init(SPI_Config SPI)
 	if(SPI.SPI == SPI2)	//CK -> PB10 	//MISO -> PB14 	//MOSI -> PB15
 	{
 		RCC -> APB1ENR |= RCC_APB1ENR_SPI2EN;
-        GPIO_Pin_Setup('B', 10, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
-		GPIO_Pin_Setup('B', 14, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
-		GPIO_Pin_Setup('B', 15, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+        GPIO_Pin_Setup(GPIOB, 10, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOB, 14, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOB, 15, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
 	}
 	if(SPI.SPI == SPI3)	//CK -> PB12 	//MISO -> PB4 	//MOSI -> PB5
 	{
 		RCC -> APB1ENR |= RCC_APB1ENR_SPI3EN;
-		GPIO_Pin_Setup('B', 12, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
-		GPIO_Pin_Setup('B', 4, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
-		GPIO_Pin_Setup('B', 5, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOB, 12, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOB, 4, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOB, 5, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
 	}
 	if(SPI.SPI == SPI4)	//CK -> PB13 	//MISO -> PA11 	//MOSI -> PA1
 	{
 		RCC -> APB2ENR |= RCC_APB2ENR_SPI4EN;
-		GPIO_Pin_Setup('B', 13, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
-		GPIO_Pin_Setup('B', 12, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
-		GPIO_Pin_Setup('A', 1, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOB, 13, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOB, 12, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOA, 1, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
 	}
 	if(SPI.SPI == SPI5)	//CK -> PB0 	//MISO -> PA12 	//MOSI -> PB8
 	{
 		RCC -> APB2ENR |= RCC_APB2ENR_SPI5EN;
-		GPIO_Pin_Setup('B', 0, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
-		GPIO_Pin_Setup('B', 8, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
-		GPIO_Pin_Setup('A', 12, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOB, 0, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOB, 8, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
+		GPIO_Pin_Setup(GPIOA, 12, ALTERNATE_FUNCTION_OUTPUT_PUSHPULL, 5);
 	}
 
 	SPI.SPI -> CR1 &= ~SPI_CR1_SPE;
-
-
-
 	SPI.SPI -> CR1 |= SPI.phase << 0;
 	SPI.SPI -> CR1 |= SPI.polarity << 1;
 	SPI.SPI -> CR1 |= SPI.mode  << 2;
 	SPI.SPI -> CR1 |= SPI.frequency << 3;
-	SPI.SPI -> CR1 |= SPI.Frame << 7;
+	SPI.SPI -> CR1 |= SPI.Frame << 11;
 	SPI.SPI -> CR1 |= SPI.CRC_Enable << 13;
+	SPI.SPI -> CR1 |= SPI.LSB_MSB << 7;
 
 	SPI.SPI -> CR1 &= ~SPI_CR1_SSM;
 
@@ -104,41 +102,28 @@ void SPI_Init(SPI_Config SPI)
 	}
 
 	SPI.SPI -> CR1 |= SPI_CR1_SPE;
+
+	GPIO_Pin_Setup(SPI.nCSS_Port, SPI.nCSS_pin, GENERAL_PURPOSE_OUTPUT_PUSHPULL, NONE);
+
 }
 
-
-void SPI_CSS_Init(SPI_Config SPI)
-{
-	if (SPI.SPI == SPI1) GPIO_Pin_Setup('A', 4, GENERAL_PURPOSE_OUTPUT_PUSHPULL, NONE);
-	if (SPI.SPI == SPI2) GPIO_Pin_Setup('B', 1, GENERAL_PURPOSE_OUTPUT_PUSHPULL, NONE);
-	if (SPI.SPI == SPI3) GPIO_Pin_Setup('B', 2, GENERAL_PURPOSE_OUTPUT_PUSHPULL, NONE);
-	if (SPI.SPI == SPI4) GPIO_Pin_Setup('A', 15, GENERAL_PURPOSE_OUTPUT_PUSHPULL, NONE);
-	if (SPI.SPI == SPI5) GPIO_Pin_Setup('B', 3, GENERAL_PURPOSE_OUTPUT_PUSHPULL, NONE);
-}
-
-void SPI_CSS_High(SPI_Config SPI)
-{
-	if (SPI.SPI == SPI1) GPIOA -> BSRR |= GPIO_BSRR_BS4;
-	if (SPI.SPI == SPI2) GPIOB -> BSRR |= GPIO_BSRR_BS1;
-	if (SPI.SPI == SPI3) GPIOB -> BSRR |= GPIO_BSRR_BS2;
-	if (SPI.SPI == SPI4) GPIOA -> BSRR |= GPIO_BSRR_BS15;
-	if (SPI.SPI == SPI5) GPIOB -> BSRR |= GPIO_BSRR_BS3;
-}
 
 void SPI_CSS_Low(SPI_Config SPI)
 {
-	if (SPI.SPI == SPI1) GPIOA -> BSRR |= GPIO_BSRR_BR4;
-	if (SPI.SPI == SPI2) GPIOB -> BSRR |= GPIO_BSRR_BR1;
-	if (SPI.SPI == SPI3) GPIOB -> BSRR |= GPIO_BSRR_BR2;
-	if (SPI.SPI == SPI4) GPIOA -> BSRR |= GPIO_BSRR_BR15;
-	if (SPI.SPI == SPI5) GPIOB -> BSRR |= GPIO_BSRR_BR3;
+	GPIO_Pin_Low(SPI.nCSS_Port, SPI.nCSS_pin);
 }
 
 
-void SPI_Send_Data(SPI_Config SPI, uint8_t data)
+void SPI_CSS_High(SPI_Config SPI)
+{
+	GPIO_Pin_High(SPI.nCSS_Port, SPI.nCSS_pin);
+}
+
+
+void SPI_Send_Data(SPI_Config SPI, int data)
 {
 
-//	while(!(SPI.SPI->SR & SPI_SR_TXE));
+	while(!(SPI.SPI->SR & SPI_SR_TXE));
 	SPI.SPI -> DR = data;
 	while(!(SPI.SPI->SR & SPI_SR_TXE));
 //	while(!(SPI.SPI->SR & SPI_SR_TXE));
@@ -147,31 +132,22 @@ void SPI_Send_Data(SPI_Config SPI, uint8_t data)
 
 int SPI_Receive_Data(SPI_Config SPI)
 {
-	int data1,data2;
-	int data[2];
+	int data1,data2 = 0;
+	int temp = 0;
 	if(SPI.Frame == SPI_Frame_8Bit)
 	{
-		SPI_Send_Data(SPI, 0xA5); //Send dummy byte
+		SPI_Send_Data(SPI, 0xFF); //Send dummy byte
 		while((SPI.SPI->SR & SPI_SR_BSY));
-		while((SPI.SPI -> SR & SPI_SR_RXNE))
-		data[0] = (SPI.SPI -> DR);
-		while((SPI.SPI->SR & SPI_SR_BSY));
-//		while((SPI.SPI->SR & SPI_SR_OVR));
-		return data[0];
+ 		while((SPI.SPI -> SR & SPI_SR_RXNE))
+		temp = (SPI.SPI -> DR);
 	}
 	if(SPI.Frame == SPI_Frame_16Bit)
 	{
-		SPI_Send_Data(SPI, 0xA5); //Send dummy byte
+		SPI_Send_Data(SPI, 0xAAAA); //Send dummy byte
 		while((SPI.SPI->SR & SPI_SR_BSY));
-		while((SPI.SPI -> SR & SPI_SR_RXNE))
-		data1 = SPI.SPI -> DR;
-		SPI_Send_Data(SPI, 0xA5); //Send dummy byte
-		while((SPI.SPI->SR & SPI_SR_BSY));
-		while((SPI.SPI -> SR & SPI_SR_RXNE))
-		data2 = SPI.SPI -> DR;
-		data[1] = data2 << 8 | data1;
-		return data[1];
+//		while((SPI.SPI -> SR & SPI_SR_RXNE))
+		temp = SPI.SPI -> DR;
 	}
 
-
+return temp;
 }

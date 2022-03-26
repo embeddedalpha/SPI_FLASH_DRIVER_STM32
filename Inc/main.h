@@ -95,7 +95,7 @@ __STATIC_INLINE void MCU_Clock_Setup(void)
 	RCC -> CFGR |= RCC_CFGR_SW_PLL;
 	while((RCC -> CFGR & RCC_CFGR_SWS_PLL) != RCC_CFGR_SWS_PLL);
 SystemCoreClockUpdate();
-//SysTick_Config(SystemCoreClock/1000);
+SysTick_Config(SystemCoreClock/1000);
 //APB1CLK_SPEED = SystemAPB1_Clock_Speed();
 //APB2CLK_SPEED = SystemAPB2_Clock_Speed();
 RCC -> APB2ENR |= RCC_APB2ENR_SYSCFGEN;

@@ -1,0 +1,6 @@
+core_cm4.h:1816:22:__NVIC_SetPriority	16	static
+core_cm4.h:2022:26:SysTick_Config	16	static
+main.h:63:22:MCU_Clock_Setup	16	static
+main.h:125:26:Delay_Config	4	static
+main.h:154:26:Delay_ms	24	static
+main.c:21:5:main	2016	static
